@@ -91,6 +91,8 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
 pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding:10px;font-size:11.5px;line-height:1.5;max-height:150px;overflow:auto;white-space:pre-wrap;margin:8px 0 0;color:#b8c4de}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
 .kv span:nth-child(odd){color:var(--mut)}
+.barra{height:8px;border-radius:6px;background:#0a1224;overflow:hidden;border:1px solid var(--bd)}
+.barra>div{height:100%;width:0;background:linear-gradient(90deg,var(--y1),var(--y2));transition:width .2s}
 </style>
 </head>
 <body>
@@ -221,14 +223,18 @@ pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding
     <div class="kv" id="devInfo"></div>
 
     <div class="tit">Atualizar firmware pelo Wi‑Fi (sem cabo)</div>
-    <label>Endereço do arquivo .bin
-      <input id="devUrl" type="url" autocapitalize="none" spellcheck="false">
-    </label>
-    <p class="dica">Gere o arquivo na Arduino IDE em Sketch › Exportar binário compilado, renomeie para firmware.bin e envie para o mesmo repositório do painel.</p>
+    <input id="devArq" type="file" hidden>
+    <button class="btn sec" id="devEscolher" style="width:100%">Escolher arquivo .bin do aparelho</button>
+    <div class="dica" id="devArqInfo">Nenhum arquivo escolhido.</div>
+    <div id="devProg" hidden style="margin-top:12px">
+      <div class="barra"><div id="devBarra"></div></div>
+      <div class="dica" id="devProgTxt"></div>
+    </div>
     <div class="acoes">
-      <button class="btn" id="devOta">Atualizar agora</button>
+      <button class="btn" id="devEnviar">Enviar ao módulo</button>
       <button class="btn perigo" id="devReiniciar">Reiniciar</button>
     </div>
+    <p class="dica">Use o arquivo que termina em .ino.bin (Sketch › Exportar binário compilado). O envio leva alguns minutos: mantenha o painel aberto e a tela ligada. Se algo falhar, o módulo continua com o programa antigo.</p>
 
     <div class="tit">Registro do módulo</div>
     <pre class="log" id="devLog"></pre>
@@ -258,6 +264,7 @@ let moduloOnline = false, conectado = false, client = null;
 let som = load('som', true);
 let devKey = null, devAuth = false, aguardandoAuth = false, authTimer = null, devLog = [];
 let editRele = -1, editAg = -1;
+let otaPronto = false, otaErro = '', otaFim = false, esperaAck = null, enviando = false, arqBuf = null;
 
 const base = () => 'automacao/' + cfg.id + '/';
 const permitido = () => !!(client && conectado && moduloOnline);
@@ -582,6 +589,9 @@ function tratarLog(raw) {
     if (t.startsWith('AUTH_HORA')) { falhaDev('A hora do celular e a do módulo não conferem, ou o módulo ainda não tem hora.'); return; }
     if (t.startsWith('AUTH_BLOQ')) { falhaDev('Muitas tentativas. Aguarde alguns minutos.'); return; }
   }
+  if (t.startsWith('OTA_PRONTO')) otaPronto = true;
+  if (t.startsWith('OTA_FIM')) otaFim = true;
+  if (t.startsWith('OTA_ERRO')) otaErro = t.split('|')[1] || 'erro no módulo';
   if (devAuth) addLog(t);
 }
 $('btnDev').addEventListener('click', () => { renderDev(); abre('ovDev'); });
@@ -599,19 +609,90 @@ $('devEntrar').addEventListener('click', async () => {
 });
 $('devSenha').addEventListener('keydown', e => { if (e.key === 'Enter') $('devEntrar').click(); });
 $('devBloquear').addEventListener('click', bloqueiaDev);
-$('devOta').addEventListener('click', async () => {
-  const u = $('devUrl').value.trim();
-  if (!/^https?:\/\//.test(u)) { alert('Informe o endereço completo do arquivo .bin.'); return; }
-  if (!confirm('Atualizar o firmware do módulo agora? Ele será reiniciado ao terminar.')) return;
-  await enviaCmd('ota', u);
-  addLog('Comando de atualização enviado.');
+const esperaCond = (fn, ms) => new Promise(res => {
+  const t0 = Date.now();
+  const iv = setInterval(() => {
+    if (fn()) { clearInterval(iv); res(true); }
+    else if (Date.now() - t0 > ms) { clearInterval(iv); res(false); }
+  }, 100);
+});
+function aguardaAck(idx, ms) {
+  return new Promise(res => {
+    const tm = setTimeout(() => { esperaAck = null; res('timeout'); }, ms);
+    esperaAck = { idx, done: v => { clearTimeout(tm); esperaAck = null; res(v); } };
+  });
+}
+function progresso(p, txt) {
+  $('devProg').hidden = false;
+  $('devBarra').style.width = p + '%';
+  $('devProgTxt').textContent = txt;
+}
+$('devEscolher').addEventListener('click', () => $('devArq').click());
+$('devArq').addEventListener('change', async () => {
+  const f = $('devArq').files[0];
+  arqBuf = null;
+  if (!f) { $('devArqInfo').textContent = 'Nenhum arquivo escolhido.'; return; }
+  const buf = new Uint8Array(await f.arrayBuffer());
+  if (buf.length < 200000 || buf[0] !== 0xE9) {
+    $('devArqInfo').textContent = 'Este não parece ser o arquivo certo. Use o que termina em .ino.bin (não o bootloader, partitions ou merged).';
+    return;
+  }
+  arqBuf = buf;
+  $('devArqInfo').textContent = f.name + ' · ' + Math.round(buf.length / 1024) + ' KB';
+});
+$('devEnviar').addEventListener('click', async () => {
+  if (enviando) return;
+  if (!arqBuf) { alert('Escolha o arquivo .bin primeiro.'); return; }
+  if (!devAuth || !permitido()) { alert('O módulo precisa estar online.'); return; }
+  if (!confirm('Enviar este firmware ao módulo? Ele será reiniciado ao terminar. Mantenha o painel aberto e a tela ligada.')) return;
+  enviando = true; otaPronto = false; otaErro = ''; otaFim = false;
+  let wl = null;
+  try { wl = await navigator.wakeLock.request('screen'); } catch (e) {}
+  try {
+    const sha = hex(await crypto.subtle.digest('SHA-256', arqBuf));
+    progresso(0, 'Preparando o módulo…');
+    await enviaCmd('otafile', arqBuf.length + ',' + sha);
+    if (!(await esperaCond(() => otaPronto || otaErro, 10000)) || otaErro) throw new Error(otaErro || 'O módulo não respondeu.');
+    const TAM = 4096, total = Math.ceil(arqBuf.length / TAM);
+    let i = 0, tent = 0;
+    while (i < total) {
+      if (otaErro) throw new Error(otaErro);
+      const ini = i * TAM;
+      const parte = arqBuf.subarray(ini, Math.min(ini + TAM, arqBuf.length));
+      const pkt = new Uint8Array(4 + parte.length);
+      pkt[0] = (i >>> 24) & 255; pkt[1] = (i >>> 16) & 255; pkt[2] = (i >>> 8) & 255; pkt[3] = i & 255;
+      pkt.set(parte, 4);
+      const espera = aguardaAck(i, 6000);
+      client.publish(base() + 'dev/ota/data', pkt, { qos: 0 });
+      const r = await espera;
+      if (r === 'ok') {
+        i++; tent = 0;
+        const pc = Math.round(i * 100 / total);
+        progresso(pc, 'Enviando… ' + pc + '%');
+      } else if (r && r.nack !== undefined) {
+        if (++tent > 8) throw new Error('Falha de sincronia com o módulo.');
+        i = r.nack;
+      } else if (++tent > 5) {
+        throw new Error('Sem resposta do módulo.');
+      }
+    }
+    progresso(100, 'Verificando no módulo…');
+    if (!(await esperaCond(() => otaFim || otaErro, 20000)) || otaErro) throw new Error(otaErro || 'Sem confirmação final.');
+    progresso(100, 'Concluído. O módulo está reiniciando…');
+    addLog('Firmware atualizado.');
+  } catch (e) {
+    progresso(0, 'Falhou: ' + e.message);
+    addLog('Falha: ' + e.message);
+  } finally {
+    enviando = false;
+    try { if (wl) wl.release(); } catch (e) {}
+  }
 });
 $('devReiniciar').addEventListener('click', async () => {
   if (!confirm('Reiniciar o módulo agora?')) return;
   await enviaCmd('reiniciar');
   addLog('Comando de reinício enviado.');
 });
-try { $('devUrl').value = new URL('firmware.bin', location.href).href; } catch (e) {}
 
 // ---------- MQTT ----------
 function alterna(i) {
@@ -640,7 +721,7 @@ function conecta() {
     conectado = true;
     client.subscribe([
       base() + 'status', base() + 'info', base() + 'agenda', base() + 'config/qtd',
-      base() + 'dev/log', base() + 'rele/+/state', base() + 'rele/+/ret'
+      base() + 'dev/log', base() + 'dev/ota/ack', base() + 'rele/+/state', base() + 'rele/+/ret'
     ]);
     desenha();
   });
@@ -662,6 +743,12 @@ function conecta() {
     } else if (r === 'info') {
       info = {};
       raw.split(';').forEach(p => { const k = p.indexOf('='); if (k > 0) info[p.slice(0, k)] = p.slice(k + 1); });
+    } else if (r === 'dev/ota/ack') {
+      if (esperaAck) {
+        if (raw.startsWith('N:')) esperaAck.done({ nack: parseInt(raw.slice(2), 10) });
+        else if (parseInt(raw, 10) === esperaAck.idx) esperaAck.done('ok');
+      }
+      return;
     } else if (r === 'dev/log') {
       tratarLog(raw);
     } else {
