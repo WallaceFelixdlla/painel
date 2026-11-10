@@ -56,8 +56,6 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
 .btn.sec{background:rgba(255,255,255,.08);color:var(--tx)}
 .btn.perigo{background:rgba(255,93,93,.18);color:#ff9a9a}
 .topico{margin-top:8px;font-size:12px;word-break:break-all}
-.rodape{margin-top:26px;text-align:center}
-.dev{background:none;border:1px dashed var(--bd);color:var(--mut);border-radius:10px;padding:8px 14px;font:inherit;font-size:12.5px;cursor:pointer}
 .nota{margin-top:14px;font-size:11.5px;color:var(--mut);text-align:center;opacity:.8}
 
 /* janelas */
@@ -87,12 +85,12 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
 .chip.on{background:linear-gradient(160deg,var(--y1),var(--y2));color:#2a1a00;border-color:transparent;font-weight:600}
 .acoes{display:flex;gap:8px;margin-top:16px}
 .acoes .btn{flex:1}
-.msg{font-size:13px;color:#ffb4b4;margin-top:10px;min-height:18px}
-pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding:10px;font-size:11.5px;line-height:1.5;max-height:150px;overflow:auto;white-space:pre-wrap;margin:8px 0 0;color:#b8c4de}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
 .kv span:nth-child(odd){color:var(--mut)}
-.barra{height:8px;border-radius:6px;background:#0a1224;overflow:hidden;border:1px solid var(--bd)}
-.barra>div{height:100%;width:0;background:linear-gradient(90deg,var(--y1),var(--y2));transition:width .2s}
+.sec2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:18px 0 8px}
+.passos{margin:8px 0 0;padding-left:20px;font-size:13.5px;line-height:1.65}
+.passos li{margin-bottom:6px}
+.linkbtn{display:block;text-align:center;text-decoration:none;margin-top:14px}
 </style>
 </head>
 <body>
@@ -131,9 +129,6 @@ pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding
     <div class="topico" id="topico"></div>
   </details>
 
-  <div class="rodape">
-    <button class="dev" id="btnDev">&lt;/&gt; Desenvolvedor</button>
-  </div>
   <p class="nota">Servidor público de teste, sem senha. Não use em instalações reais.</p>
 </div>
 
@@ -146,6 +141,9 @@ pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding
   <p class="dica">Só os relés habilitados aparecem no painel e são acionados pelo módulo.</p>
   <div class="tit">Configurar cada relé</div>
   <div class="lista" id="listaRele"></div>
+  <div class="sec2">Módulo</div>
+  <div class="kv" id="modInfo"></div>
+  <button class="btn sec add" id="btnCfgModulo">Ver e editar o ID e o Wi‑Fi do módulo</button>
   <p class="dica" id="iosDica">Para instalar no iPhone ou iPad: toque em Compartilhar e depois em "Adicionar à Tela de Início". No Android e no computador, use o botão Instalar quando ele aparecer.</p>
 </div></div>
 
@@ -155,7 +153,30 @@ pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding
   <p class="dica" id="agHoraMod"></p>
   <div class="lista" id="listaAg" style="margin-top:12px"></div>
   <button class="btn add" id="agNovo">+ Novo agendamento</button>
-  <p class="dica">Os horários ficam gravados no módulo e funcionam mesmo com o celular desligado. Se o relé tiver retenção, "Ligar" gera o pulso configurado.</p>
+  <p class="dica">Os horários ficam gravados no módulo e funcionam mesmo com o celular desligado. "Ligar e desligar" aciona o relé em um horário e desliga em outro (se o desligar for antes do ligar, ele desliga no dia seguinte).</p>
+</div></div>
+
+<!-- Configurar módulo -->
+<div class="ov" id="ovModulo" hidden><div class="modal">
+  <div class="mh"><h2>Configurar módulo</h2><button class="x" data-fecha="ovModulo" aria-label="Fechar">✕</button></div>
+
+  <div class="sec2" style="margin-top:6px">ID usado por este painel</div>
+  <div class="cfg">
+    <input id="idDisp2" placeholder="ID do dispositivo" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off">
+    <button id="salvaId2">Salvar</button>
+  </div>
+  <p class="dica" id="idStatus"></p>
+
+  <div class="sec2">ID e Wi‑Fi gravados no módulo</div>
+  <p class="dica" style="margin-top:0">Esses dados ficam na memória do módulo, e não no código. Para ver ou mudar, abra a página de configuração do próprio módulo:</p>
+  <ol class="passos">
+    <li>No módulo, <b>segure o botão BOOT por 3 segundos</b>. (Se ele estiver sem Wi‑Fi, a página abre sozinha depois de 1 minuto.)</li>
+    <li>No celular, conecte na rede Wi‑Fi <b>CasaSeg-XXXX</b>. A senha padrão é <b>casaseg123</b>.</li>
+    <li>Toque no botão abaixo (ou digite <b>192.168.4.1</b> no navegador).</li>
+    <li>Veja ou edite o <b>ID</b> e o <b>Wi‑Fi</b> e toque em <b>Salvar e reiniciar</b>.</li>
+    <li>Volte para o Wi‑Fi normal do celular e coloque o mesmo ID neste painel.</li>
+  </ol>
+  <a class="btn linkbtn" href="http://192.168.4.1" target="_blank" rel="noopener">Abrir página do módulo</a>
 </div></div>
 
 <!-- Editar relé -->
@@ -187,9 +208,14 @@ pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding
   <div class="mh"><h2 id="agTit">Agendamento</h2><button class="x" data-fecha="ovAg" aria-label="Fechar">✕</button></div>
   <label>Relé <select id="agRele"></select></label>
   <label>Ação
-    <select id="agAcao"><option value="1">Ligar</option><option value="0">Desligar</option></select>
+    <select id="agAcao">
+      <option value="1">Ligar</option>
+      <option value="0">Desligar</option>
+      <option value="2">Ligar e desligar</option>
+    </select>
   </label>
-  <label>Horário <input id="agHora" type="time" value="08:00"></label>
+  <label><span id="agHoraT">Horário</span> <input id="agHora" type="time" value="08:00"></label>
+  <label id="agHora2L" hidden>Desligar às <input id="agHora2" type="time" value="23:00"></label>
   <label>Repetição
     <select id="agRep">
       <option value="todos">Todos os dias</option>
@@ -202,43 +228,6 @@ pre.log{background:#0a1224;border:1px solid var(--bd);border-radius:10px;padding
   <div class="acoes">
     <button class="btn sec" data-fecha="ovAg">Cancelar</button>
     <button class="btn" id="agSalva">Salvar</button>
-  </div>
-</div></div>
-
-<!-- Desenvolvedor -->
-<div class="ov" id="ovDev" hidden><div class="modal">
-  <div class="mh"><h2>Desenvolvedor</h2><button class="x" data-fecha="ovDev" aria-label="Fechar">✕</button></div>
-
-  <div id="devLock">
-    <p class="dica" style="margin-top:0">Área técnica protegida por senha. A senha é conferida pelo próprio módulo.</p>
-    <label>Senha do desenvolvedor
-      <input id="devSenha" type="password" autocomplete="off" autocapitalize="none" spellcheck="false">
-    </label>
-    <div class="msg" id="devMsg"></div>
-    <div class="acoes"><button class="btn" id="devEntrar">Entrar</button></div>
-  </div>
-
-  <div id="devTools" hidden>
-    <div class="tit" style="margin-top:6px">Módulo</div>
-    <div class="kv" id="devInfo"></div>
-
-    <div class="tit">Atualizar firmware pelo Wi‑Fi (sem cabo)</div>
-    <input id="devArq" type="file" hidden>
-    <button class="btn sec" id="devEscolher" style="width:100%">Escolher arquivo .bin do aparelho</button>
-    <div class="dica" id="devArqInfo">Nenhum arquivo escolhido.</div>
-    <div id="devProg" hidden style="margin-top:12px">
-      <div class="barra"><div id="devBarra"></div></div>
-      <div class="dica" id="devProgTxt"></div>
-    </div>
-    <div class="acoes">
-      <button class="btn" id="devEnviar">Enviar ao módulo</button>
-      <button class="btn perigo" id="devReiniciar">Reiniciar</button>
-    </div>
-    <p class="dica">Use o arquivo que termina em .ino.bin (Sketch › Exportar binário compilado). O envio leva alguns minutos: mantenha o painel aberto e a tela ligada. Se algo falhar, o módulo continua com o programa antigo.</p>
-
-    <div class="tit">Registro do módulo</div>
-    <pre class="log" id="devLog"></pre>
-    <div class="acoes"><button class="btn sec" id="devBloquear">Bloquear</button></div>
   </div>
 </div></div>
 
@@ -262,9 +251,7 @@ let ag = [];
 let info = {};
 let moduloOnline = false, conectado = false, client = null;
 let som = load('som', true);
-let devKey = null, devAuth = false, aguardandoAuth = false, authTimer = null, devLog = [];
 let editRele = -1, editAg = -1;
-let otaPronto = false, otaErro = '', otaFim = false, esperaAck = null, enviando = false, arqBuf = null;
 
 const base = () => 'automacao/' + cfg.id + '/';
 const permitido = () => !!(client && conectado && moduloOnline);
@@ -274,7 +261,6 @@ const avisaOffline = () => alert('O módulo precisa estar online para salvar ess
 const abre = id => { $(id).hidden = false; };
 function fecha(id) {
   $(id).hidden = true;
-  if (id === 'ovDev') bloqueiaDev();
 }
 document.querySelectorAll('[data-fecha]').forEach(b => b.addEventListener('click', () => fecha(b.dataset.fecha)));
 document.querySelectorAll('.ov').forEach(o => o.addEventListener('click', e => { if (e.target === o) fecha(o.id); }));
@@ -338,7 +324,7 @@ function desenha() {
   $('topico').textContent = cfg.id ? 'Escutando: ' + base() : '';
   if (!$('ovAjustes').hidden) renderAjustes();
   if (!$('ovAgenda').hidden) renderAgenda();
-  if (!$('ovDev').hidden) renderDev();
+  if (!$('ovModulo').hidden) renderModulo();
 }
 
 // ---------- Ajustes ----------
@@ -348,6 +334,7 @@ for (let n = 1; n <= MAXN; n++) {
 }
 function renderAjustes() {
   $('selQtd').value = String(qtd);
+  renderModInfo();
   const l = $('listaRele'); l.innerHTML = '';
   for (let i = 0; i < qtd; i++) {
     const b = document.createElement('button'); b.className = 'row';
@@ -362,6 +349,20 @@ function renderAjustes() {
     l.appendChild(b);
   }
 }
+function renderModInfo() {
+  const kv = $('modInfo'); kv.innerHTML = '';
+  const linhas = moduloOnline
+    ? [['Versão', info.ver || '—'], ['Endereço IP', info.ip || '—'], ['Sinal Wi‑Fi', info.rssi ? info.rssi + ' dBm' : '—'], ['Hora do módulo', info.hora || '—']]
+    : [['Situação', 'offline']];
+  linhas.forEach(([k, v]) => { const a = document.createElement('span'); a.textContent = k; const b = document.createElement('span'); b.textContent = v; kv.append(a, b); });
+}
+function renderModulo() {
+  $('idDisp2').value = cfg.id || '';
+  $('idStatus').textContent = !cfg.id ? 'Digite o ID do módulo.'
+    : moduloOnline ? 'Módulo online com este ID. Ele é o mesmo gravado no módulo.'
+    : 'Módulo offline, ou este ID é diferente do gravado no módulo.';
+}
+$('btnCfgModulo').addEventListener('click', () => { renderModulo(); abre('ovModulo'); });
 $('btnAjustes').addEventListener('click', () => { renderAjustes(); abre('ovAjustes'); });
 $('selQtd').addEventListener('change', () => {
   const n = parseInt($('selQtd').value, 10);
@@ -408,13 +409,13 @@ $('mSalva').addEventListener('click', () => {
 // ---------- Agenda ----------
 function serializaAgenda() {
   if (!ag.length) return '-';
-  return ag.map(a => [a.rele, a.acao, a.hh, a.mm, a.dias, a.unico, a.ativo, a.ano, a.mes, a.dia].join(',')).join(';');
+  return ag.map(a => [a.rele, a.acao, a.hh, a.mm, a.dias, a.unico, a.ativo, a.ano, a.mes, a.dia, a.fim, a.hh2, a.mm2].join(',')).join(';');
 }
 function parseAgenda(s) {
   if (!s || s === '-') return [];
   return s.split(';').map(t => t.split(',').map(Number))
-    .filter(v => v.length === 10 && v.every(x => !isNaN(x)))
-    .map(v => ({ rele: v[0], acao: v[1], hh: v[2], mm: v[3], dias: v[4], unico: v[5], ativo: v[6], ano: v[7], mes: v[8], dia: v[9] }));
+    .filter(v => (v.length === 10 || v.length === 13) && v.every(x => !isNaN(x)))
+    .map(v => ({ rele: v[0], acao: v[1], hh: v[2], mm: v[3], dias: v[4], unico: v[5], ativo: v[6], ano: v[7], mes: v[8], dia: v[9], fim: v[10] || 0, hh2: v[11] || 0, mm2: v[12] || 0 }));
 }
 function publicaAgenda() {
   ag.sort((x, y) => (x.hh * 60 + x.mm) - (y.hh * 60 + y.mm));
@@ -438,9 +439,13 @@ function renderAgenda() {
     const b = document.createElement('div'); b.className = 'row';
     const col = document.createElement('div'); col.className = 'col';
     const t = document.createElement('b');
-    t.textContent = pad(a.hh) + ':' + pad(a.mm) + ' · ' + (a.acao ? 'Ligar' : 'Desligar') + ' · ' + (nomes[a.rele - 1] || 'Relé ' + a.rele);
+    const nomeRele = nomes[a.rele - 1] || 'Relé ' + a.rele;
+    t.textContent = a.fim
+      ? pad(a.hh) + ':' + pad(a.mm) + ' → ' + pad(a.hh2) + ':' + pad(a.mm2) + ' · Liga e desliga · ' + nomeRele
+      : pad(a.hh) + ':' + pad(a.mm) + ' · ' + (a.acao ? 'Ligar' : 'Desligar') + ' · ' + nomeRele;
     const s = document.createElement('span'); s.className = 'sub';
     let desc = descDias(a);
+    if (a.fim && (a.hh2 * 60 + a.mm2) < (a.hh * 60 + a.mm)) desc += ' · desliga no dia seguinte';
     if (a.rele > qtd) desc += ' · relé desabilitado';
     if (a.unico && !a.ativo) desc += ' · já executado';
     else if (a.unico && new Date(a.ano, a.mes - 1, a.dia, a.hh, a.mm) < new Date()) desc += ' · já passou';
@@ -474,6 +479,12 @@ DIAS.forEach((d, i) => {
   c.addEventListener('click', () => c.classList.toggle('on'));
   $('agChips').appendChild(c); chips.push(c);
 });
+function atualizaAcao() {
+  const dois = $('agAcao').value === '2';
+  $('agHora2L').hidden = !dois;
+  $('agHoraT').textContent = dois ? 'Ligar às' : 'Horário';
+}
+$('agAcao').addEventListener('change', atualizaAcao);
 function atualizaRep() {
   const v = $('agRep').value;
   $('agChips').hidden = v !== 'semana';
@@ -491,14 +502,16 @@ function abreAg(idx) {
   }
   const a = idx >= 0 ? ag[idx] : null;
   if (a && a.rele <= qtd) sel.value = String(a.rele);
-  $('agAcao').value = a ? String(a.acao) : '1';
+  $('agAcao').value = a ? (a.fim ? '2' : String(a.acao)) : '1';
   $('agHora').value = a ? pad(a.hh) + ':' + pad(a.mm) : '08:00';
+  $('agHora2').value = a && a.fim ? pad(a.hh2) + ':' + pad(a.mm2) : '23:00';
   let rep = 'todos';
   if (a && a.unico) rep = 'unico'; else if (a && a.dias !== 127) rep = 'semana';
   $('agRep').value = rep;
   chips.forEach((c, i) => c.classList.toggle('on', a && !a.unico && (a.dias & (1 << i))));
   if (a && a.unico) $('agData').value = a.ano + '-' + pad(a.mes) + '-' + pad(a.dia); else $('agData').value = '';
   atualizaRep();
+  atualizaAcao();
   abre('ovAg');
 }
 $('agNovo').addEventListener('click', () => {
@@ -510,7 +523,14 @@ $('agSalva').addEventListener('click', () => {
   const [hh, mm] = ($('agHora').value || '').split(':').map(Number);
   if (isNaN(hh) || isNaN(mm)) { alert('Escolha o horário.'); return; }
   const rep = $('agRep').value;
-  const a = { rele: Number($('agRele').value), acao: Number($('agAcao').value), hh, mm, dias: 127, unico: 0, ativo: 1, ano: 0, mes: 0, dia: 0 };
+  const sel = $('agAcao').value;
+  const a = { rele: Number($('agRele').value), acao: sel === '0' ? 0 : 1, hh, mm, dias: 127, unico: 0, ativo: 1, ano: 0, mes: 0, dia: 0, fim: 0, hh2: 0, mm2: 0 };
+  if (sel === '2') {
+    const [h2, m2] = ($('agHora2').value || '').split(':').map(Number);
+    if (isNaN(h2) || isNaN(m2)) { alert('Escolha o horário de desligar.'); return; }
+    if (h2 === hh && m2 === mm) { alert('O horário de desligar precisa ser diferente do de ligar.'); return; }
+    a.fim = 1; a.hh2 = h2; a.mm2 = m2;
+  }
   if (rep === 'semana') {
     let d = 0; chips.forEach((c, i) => { if (c.classList.contains('on')) d |= (1 << i); });
     if (!d) { alert('Escolha ao menos um dia da semana.'); return; }
@@ -530,168 +550,6 @@ $('agSalva').addEventListener('click', () => {
   publicaAgenda();
   fecha('ovAg');
   renderAgenda();
-});
-
-// ---------- Desenvolvedor (senha conferida pelo módulo) ----------
-const hex = buf => [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join('');
-async function sha256hex(s) { return hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s))); }
-async function hmacHex(chave, msg) {
-  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(chave), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  return hex(await crypto.subtle.sign('HMAC', k, new TextEncoder().encode(msg)));
-}
-async function enviaCmd(cmd, arg) {
-  const ts = Math.floor(Date.now() / 1000);
-  const msg = ts + '|' + cmd + '|' + (arg || '');
-  const sig = await hmacHex(devKey, msg);
-  client.publish(base() + 'dev/cmd', msg + '|' + sig);
-}
-function addLog(t) {
-  devLog.push(new Date().toLocaleTimeString('pt-BR') + '  ' + t);
-  if (devLog.length > 60) devLog.shift();
-  if (!$('ovDev').hidden) renderDev();
-}
-function falhaDev(t) {
-  aguardandoAuth = false; devKey = null; devAuth = false;
-  $('devMsg').textContent = t;
-  renderDev();
-}
-function bloqueiaDev() {
-  devKey = null; devAuth = false; aguardandoAuth = false; clearTimeout(authTimer);
-  $('devSenha').value = ''; $('devMsg').textContent = '';
-  renderDev();
-}
-function renderDev() {
-  $('devLock').hidden = devAuth;
-  $('devTools').hidden = !devAuth;
-  if (!devAuth) return;
-  const kv = $('devInfo'); kv.innerHTML = '';
-  const linhas = [
-    ['Versão', info.ver || '—'], ['Endereço IP', info.ip || '—'],
-    ['Sinal Wi‑Fi', info.rssi ? info.rssi + ' dBm' : '—'],
-    ['Hora do módulo', info.hora || '—'], ['Relés habilitados', String(qtd)]
-  ];
-  linhas.forEach(([k, v]) => { const a = document.createElement('span'); a.textContent = k; const b = document.createElement('span'); b.textContent = v; kv.append(a, b); });
-  $('devLog').textContent = devLog.join('\n') || 'Sem mensagens.';
-}
-function tratarLog(raw) {
-  const t = raw.trim();
-  if (t.startsWith('AUTH_OK')) {
-    if (aguardandoAuth) {
-      aguardandoAuth = false; clearTimeout(authTimer); devAuth = true; devLog = [];
-      $('devMsg').textContent = ''; $('devSenha').value = '';
-      addLog('Acesso liberado.');
-      renderDev();
-    }
-    return;
-  }
-  if (aguardandoAuth) {
-    if (t.startsWith('AUTH_FAIL')) { falhaDev('Senha incorreta.'); return; }
-    if (t.startsWith('AUTH_HORA')) { falhaDev('A hora do celular e a do módulo não conferem, ou o módulo ainda não tem hora.'); return; }
-    if (t.startsWith('AUTH_BLOQ')) { falhaDev('Muitas tentativas. Aguarde alguns minutos.'); return; }
-  }
-  if (t.startsWith('OTA_PRONTO')) otaPronto = true;
-  if (t.startsWith('OTA_FIM')) otaFim = true;
-  if (t.startsWith('OTA_ERRO')) otaErro = t.split('|')[1] || 'erro no módulo';
-  if (devAuth) addLog(t);
-}
-$('btnDev').addEventListener('click', () => { renderDev(); abre('ovDev'); });
-$('devEntrar').addEventListener('click', async () => {
-  const s = $('devSenha').value;
-  if (!s) return;
-  if (!(window.crypto && crypto.subtle)) { $('devMsg').textContent = 'Abra o painel pelo endereço https para usar esta área.'; return; }
-  if (!permitido()) { $('devMsg').textContent = 'O módulo precisa estar online para validar a senha.'; return; }
-  devKey = await sha256hex(s);
-  aguardandoAuth = true;
-  $('devMsg').textContent = 'Validando…';
-  await enviaCmd('ping');
-  clearTimeout(authTimer);
-  authTimer = setTimeout(() => { if (aguardandoAuth) falhaDev('Sem resposta do módulo.'); }, 8000);
-});
-$('devSenha').addEventListener('keydown', e => { if (e.key === 'Enter') $('devEntrar').click(); });
-$('devBloquear').addEventListener('click', bloqueiaDev);
-const esperaCond = (fn, ms) => new Promise(res => {
-  const t0 = Date.now();
-  const iv = setInterval(() => {
-    if (fn()) { clearInterval(iv); res(true); }
-    else if (Date.now() - t0 > ms) { clearInterval(iv); res(false); }
-  }, 100);
-});
-function aguardaAck(idx, ms) {
-  return new Promise(res => {
-    const tm = setTimeout(() => { esperaAck = null; res('timeout'); }, ms);
-    esperaAck = { idx, done: v => { clearTimeout(tm); esperaAck = null; res(v); } };
-  });
-}
-function progresso(p, txt) {
-  $('devProg').hidden = false;
-  $('devBarra').style.width = p + '%';
-  $('devProgTxt').textContent = txt;
-}
-$('devEscolher').addEventListener('click', () => $('devArq').click());
-$('devArq').addEventListener('change', async () => {
-  const f = $('devArq').files[0];
-  arqBuf = null;
-  if (!f) { $('devArqInfo').textContent = 'Nenhum arquivo escolhido.'; return; }
-  const buf = new Uint8Array(await f.arrayBuffer());
-  if (buf.length < 200000 || buf[0] !== 0xE9) {
-    $('devArqInfo').textContent = 'Este não parece ser o arquivo certo. Use o que termina em .ino.bin (não o bootloader, partitions ou merged).';
-    return;
-  }
-  arqBuf = buf;
-  $('devArqInfo').textContent = f.name + ' · ' + Math.round(buf.length / 1024) + ' KB';
-});
-$('devEnviar').addEventListener('click', async () => {
-  if (enviando) return;
-  if (!arqBuf) { alert('Escolha o arquivo .bin primeiro.'); return; }
-  if (!devAuth || !permitido()) { alert('O módulo precisa estar online.'); return; }
-  if (!confirm('Enviar este firmware ao módulo? Ele será reiniciado ao terminar. Mantenha o painel aberto e a tela ligada.')) return;
-  enviando = true; otaPronto = false; otaErro = ''; otaFim = false;
-  let wl = null;
-  try { wl = await navigator.wakeLock.request('screen'); } catch (e) {}
-  try {
-    const sha = hex(await crypto.subtle.digest('SHA-256', arqBuf));
-    progresso(0, 'Preparando o módulo…');
-    await enviaCmd('otafile', arqBuf.length + ',' + sha);
-    if (!(await esperaCond(() => otaPronto || otaErro, 10000)) || otaErro) throw new Error(otaErro || 'O módulo não respondeu.');
-    const TAM = 4096, total = Math.ceil(arqBuf.length / TAM);
-    let i = 0, tent = 0;
-    while (i < total) {
-      if (otaErro) throw new Error(otaErro);
-      const ini = i * TAM;
-      const parte = arqBuf.subarray(ini, Math.min(ini + TAM, arqBuf.length));
-      const pkt = new Uint8Array(4 + parte.length);
-      pkt[0] = (i >>> 24) & 255; pkt[1] = (i >>> 16) & 255; pkt[2] = (i >>> 8) & 255; pkt[3] = i & 255;
-      pkt.set(parte, 4);
-      const espera = aguardaAck(i, 6000);
-      client.publish(base() + 'dev/ota/data', pkt, { qos: 0 });
-      const r = await espera;
-      if (r === 'ok') {
-        i++; tent = 0;
-        const pc = Math.round(i * 100 / total);
-        progresso(pc, 'Enviando… ' + pc + '%');
-      } else if (r && r.nack !== undefined) {
-        if (++tent > 8) throw new Error('Falha de sincronia com o módulo.');
-        i = r.nack;
-      } else if (++tent > 5) {
-        throw new Error('Sem resposta do módulo.');
-      }
-    }
-    progresso(100, 'Verificando no módulo…');
-    if (!(await esperaCond(() => otaFim || otaErro, 20000)) || otaErro) throw new Error(otaErro || 'Sem confirmação final.');
-    progresso(100, 'Concluído. O módulo está reiniciando…');
-    addLog('Firmware atualizado.');
-  } catch (e) {
-    progresso(0, 'Falhou: ' + e.message);
-    addLog('Falha: ' + e.message);
-  } finally {
-    enviando = false;
-    try { if (wl) wl.release(); } catch (e) {}
-  }
-});
-$('devReiniciar').addEventListener('click', async () => {
-  if (!confirm('Reiniciar o módulo agora?')) return;
-  await enviaCmd('reiniciar');
-  addLog('Comando de reinício enviado.');
 });
 
 // ---------- MQTT ----------
@@ -721,7 +579,7 @@ function conecta() {
     conectado = true;
     client.subscribe([
       base() + 'status', base() + 'info', base() + 'agenda', base() + 'config/qtd',
-      base() + 'dev/log', base() + 'dev/ota/ack', base() + 'rele/+/state', base() + 'rele/+/ret'
+      base() + 'rele/+/state', base() + 'rele/+/ret'
     ]);
     desenha();
   });
@@ -743,14 +601,6 @@ function conecta() {
     } else if (r === 'info') {
       info = {};
       raw.split(';').forEach(p => { const k = p.indexOf('='); if (k > 0) info[p.slice(0, k)] = p.slice(k + 1); });
-    } else if (r === 'dev/ota/ack') {
-      if (esperaAck) {
-        if (raw.startsWith('N:')) esperaAck.done({ nack: parseInt(raw.slice(2), 10) });
-        else if (parseInt(raw, 10) === esperaAck.idx) esperaAck.done('ok');
-      }
-      return;
-    } else if (r === 'dev/log') {
-      tratarLog(raw);
     } else {
       let m = r.match(/^rele\/(\d+)\/ret$/);
       if (m) {
@@ -772,13 +622,17 @@ function conecta() {
   });
 }
 
-$('idDisp').value = cfg.id;
-$('salvaId').addEventListener('click', () => {
-  const v = $('idDisp').value.trim();
-  if (!v) return;
-  cfg.id = v; save('cfg', cfg);
+function limpaId(v) { return (v || '').trim().toLowerCase().replace(/[^a-z0-9_-]/g, ''); }
+function trocaId(v) {
+  const id = limpaId(v);
+  if (id.length < 3) { alert('O ID precisa ter ao menos 3 caracteres (letras minúsculas, números, - e _).'); return; }
+  cfg.id = id; save('cfg', cfg);
+  $('idDisp').value = id; $('idDisp2').value = id;
   conecta();
-});
+}
+$('idDisp').value = cfg.id;
+$('salvaId').addEventListener('click', () => trocaId($('idDisp').value));
+$('salvaId2').addEventListener('click', () => trocaId($('idDisp2').value));
 
 // ---------- instalação (PWA) ----------
 let promptInstalar = null;
