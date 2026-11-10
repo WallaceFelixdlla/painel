@@ -19,7 +19,7 @@
 html{background:var(--bg)}
 body{margin:0;min-height:100vh;color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   background:radial-gradient(900px 380px at 50% -120px,#1d2d55 0,transparent 70%),linear-gradient(180deg,var(--bg2),var(--bg));
-  padding:calc(env(safe-area-inset-top,0px) + 14px) 16px calc(env(safe-area-inset-bottom,0px) + 24px)}
+  padding:calc(env(safe-area-inset-top,0px) + 10px) 16px calc(env(safe-area-inset-bottom,0px) + 96px)}
 .wrap{max-width:760px;margin:0 auto}
 header{display:flex;flex-direction:column;align-items:center;gap:8px;margin:6px 0 14px}
 header img{height:54px;width:auto;display:block;filter:drop-shadow(0 2px 12px rgba(255,170,0,.18))}
@@ -55,12 +55,23 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
 .btn,.cfg button{padding:11px 16px;border-radius:10px;border:0;background:linear-gradient(160deg,var(--y1),var(--y2));color:#2a1a00;font:inherit;font-weight:600;cursor:pointer}
 .btn.sec{background:rgba(255,255,255,.08);color:var(--tx)}
 .btn.perigo{background:rgba(255,93,93,.18);color:#ff9a9a}
-.topico{margin-top:8px;font-size:12px;word-break:break-all}
+.topo{display:flex;align-items:center;justify-content:space-between;min-height:34px}
+#dataHora{font-size:11.5px;color:var(--mut);opacity:.75;letter-spacing:.02em}
+.tb.ic{width:34px;height:34px;padding:0;justify-content:center;border-radius:10px}
+.tb.ic svg{width:18px;height:18px}
+.todosWrap{display:flex;justify-content:center;margin-bottom:14px}
+.tb.off{opacity:.5}
+.tb.on{background:linear-gradient(160deg,var(--y1),var(--y2));color:#2a1a00;border-color:transparent;font-weight:600}
+.abas{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(10,16,32,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--bd)}
+.abas .in{display:flex;width:100%;max-width:480px;gap:6px}
+.aba{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border:0;border-radius:12px;background:none;color:var(--mut);font:inherit;font-size:11.5px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.aba svg{width:22px;height:22px}
+.aba.on{color:var(--y1);background:rgba(255,210,31,.08)}
 .nota{margin-top:14px;font-size:11.5px;color:var(--mut);text-align:center;opacity:.8}
 
 /* janelas */
-.ov{position:fixed;inset:0;background:rgba(5,10,20,.74);display:flex;align-items:center;justify-content:center;padding:14px;z-index:20}
-.modal{width:100%;max-width:480px;max-height:88vh;overflow:auto;background:linear-gradient(180deg,#18243f,var(--card));border:1px solid var(--bd);border-radius:18px;padding:16px}
+.ov{position:fixed;inset:0;background:rgba(5,10,20,.74);display:flex;align-items:center;justify-content:center;padding:14px 14px calc(78px + env(safe-area-inset-bottom,0px));z-index:20}
+.modal{width:100%;max-width:480px;max-height:calc(100vh - 170px);max-height:calc(100dvh - 170px);overflow:auto;background:linear-gradient(180deg,#18243f,var(--card));border:1px solid var(--bd);border-radius:18px;padding:16px}
 .mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .mh h2{margin:0;font-size:17px}
 .x{background:none;border:0;color:var(--mut);font-size:20px;cursor:pointer;padding:4px 8px}
@@ -95,42 +106,33 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
 </head>
 <body>
 <div class="wrap">
+  <div class="topo">
+    <span id="dataHora"></span>
+    <button class="tb ic" id="btnSom" aria-label="Ligar ou desligar o som"></button>
+  </div>
   <header>
     <img id="logo" alt="Casa da Segurança" src="logo.webp">
     <h1>Automação</h1>
   </header>
-
-  <div class="toolbar">
-    <button class="tb" id="btnSom" aria-label="Ligar ou desligar o som"></button>
-    <button class="tb" id="btnAgenda">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Agenda
-    </button>
-    <button class="tb" id="btnAjustes">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes
-    </button>
-    <button class="tb" id="btnInstalar" hidden>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg>Instalar
-    </button>
-  </div>
 
   <div class="status">
     <div class="pill"><span class="dot" id="dSrv"></span><span id="tSrv">Conectando…</span></div>
     <div class="pill"><span class="dot" id="dMod"></span><span id="tMod">Módulo: aguardando</span></div>
   </div>
 
+  <div class="todosWrap"><button class="tb" id="btnTodos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.4 6.8a8 8 0 1 0 11.2 0"/></svg><span id="tTodos">Ligar todos</span></button></div>
+
   <div class="grid" id="grid"></div>
 
-  <details>
-    <summary>ID do dispositivo</summary>
-    <div class="cfg">
-      <input id="idDisp" placeholder="ID do dispositivo" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="off">
-      <button id="salvaId">Salvar</button>
-    </div>
-    <div class="topico" id="topico"></div>
-  </details>
 
   <p class="nota">Servidor público de teste, sem senha. Não use em instalações reais.</p>
 </div>
+
+<nav class="abas" id="abas"><div class="in">
+  <button class="aba on" data-aba="painel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Painel</button>
+  <button class="aba" data-aba="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Agenda</button>
+  <button class="aba" data-aba="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg>Ajustes</button>
+</div></nav>
 
 <!-- Ajustes -->
 <div class="ov" id="ovAjustes" hidden><div class="modal">
@@ -144,7 +146,8 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
   <div class="sec2">Módulo</div>
   <div class="kv" id="modInfo"></div>
   <button class="btn sec add" id="btnCfgModulo">Ver e editar o ID e o Wi‑Fi do módulo</button>
-  <p class="dica" id="iosDica">Para instalar no iPhone ou iPad: toque em Compartilhar e depois em "Adicionar à Tela de Início". No Android e no computador, use o botão Instalar quando ele aparecer.</p>
+  <button class="btn sec add" id="btnInstalar" hidden>Instalar aplicativo neste aparelho</button>
+  <p class="dica" id="iosDica">Para instalar no iPhone ou iPad: toque em Compartilhar e depois em "Adicionar à Tela de Início". No Android e no computador, o botão "Instalar aplicativo" aparece aqui quando o navegador permitir.</p>
 </div></div>
 
 <!-- Agenda -->
@@ -166,6 +169,7 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
     <button id="salvaId2">Salvar</button>
   </div>
   <p class="dica" id="idStatus"></p>
+  <p class="dica" id="idTopico" style="word-break:break-all"></p>
 
   <div class="sec2">ID e Wi‑Fi gravados no módulo</div>
   <p class="dica" style="margin-top:0">Esses dados ficam na memória do módulo, e não no código. Para ver ou mudar, abra a página de configuração do próprio módulo:</p>
@@ -258,10 +262,21 @@ const permitido = () => !!(client && conectado && moduloOnline);
 const avisaOffline = () => alert('O módulo precisa estar online para salvar essa configuração.');
 
 // ---------- janelas ----------
-const abre = id => { $(id).hidden = false; };
-function fecha(id) {
-  $(id).hidden = true;
+function atualizaAba() {
+  const ag = !$('ovAgenda').hidden || !$('ovAg').hidden;
+  const aj = !$('ovAjustes').hidden || !$('ovModulo').hidden || !$('ovRele').hidden;
+  const atual = ag ? 'agenda' : aj ? 'ajustes' : 'painel';
+  document.querySelectorAll('.aba').forEach(b => b.classList.toggle('on', b.dataset.aba === atual));
 }
+const abre = id => { $(id).hidden = false; atualizaAba(); };
+function fecha(id) { $(id).hidden = true; atualizaAba(); }
+function irAba(n) {
+  ['ovAjustes', 'ovAgenda', 'ovModulo', 'ovRele', 'ovAg'].forEach(i => { $(i).hidden = true; });
+  if (n === 'agenda') { renderAgenda(); $('ovAgenda').hidden = false; }
+  else if (n === 'ajustes') { renderAjustes(); $('ovAjustes').hidden = false; }
+  atualizaAba();
+}
+document.querySelectorAll('.aba').forEach(b => b.addEventListener('click', () => irAba(b.dataset.aba)));
 document.querySelectorAll('[data-fecha]').forEach(b => b.addEventListener('click', () => fecha(b.dataset.fecha)));
 document.querySelectorAll('.ov').forEach(o => o.addEventListener('click', e => { if (e.target === o) fecha(o.id); }));
 
@@ -269,9 +284,28 @@ document.querySelectorAll('.ov').forEach(o => o.addEventListener('click', e => {
 const SOM_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const SOM_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6"/><path d="M21 9l-5 6"/></svg>';
 function atualizaSom() { $('btnSom').innerHTML = som ? SOM_ON : SOM_OFF; $('btnSom').classList.toggle('mudo', !som); }
+let vozMasc = null;
+function escolheVoz() {
+  if (!('speechSynthesis' in window)) return;
+  const pt = speechSynthesis.getVoices().filter(v => /^pt/i.test(v.lang));
+  const masc = /daniel|ant[oô]nio|felipe|ricardo|jo[aã]o|jorge|thiago|marcos|paulo|male|masculin|ptd/i;
+  const fem = /maria|francisca|luciana|vit[oó]ria|thalita|camila|helena|fernanda|female|feminin|afs/i;
+  const ok = v => masc.test(v.name + ' ' + v.voiceURI) && !fem.test(v.name);
+  vozMasc = pt.find(v => /^pt[-_]BR/i.test(v.lang) && ok(v)) || pt.find(ok) || null;
+}
+if ('speechSynthesis' in window) { escolheVoz(); speechSynthesis.addEventListener('voiceschanged', escolheVoz); }
+let silencioAte = 0;
 function fala(texto) {
   if (!som || !('speechSynthesis' in window)) return;
-  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(texto); u.lang = 'pt-BR'; u.rate = 1.05; speechSynthesis.speak(u); } catch (e) {}
+  try {
+    if (!vozMasc) escolheVoz();
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'pt-BR';
+    if (vozMasc) { u.voice = vozMasc; u.pitch = 1; u.rate = 1.05; }
+    else { u.pitch = 0.6; u.rate = 1.0; }   // sem voz masculina no aparelho: deixa o tom mais grave
+    speechSynthesis.speak(u);
+  } catch (e) {}
 }
 function desbloqueiaVoz() { try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {} }
 document.addEventListener('click', desbloqueiaVoz, { once: true });
@@ -321,7 +355,12 @@ function desenha() {
   $('tSrv').textContent = conectado ? 'Servidor conectado' : 'Servidor desconectado';
   $('dMod').className = 'dot ' + (moduloOnline ? 'ok' : (conectado ? 'bad' : ''));
   $('tMod').textContent = 'Módulo: ' + (moduloOnline ? 'online' : 'offline');
-  $('topico').textContent = cfg.id ? 'Escutando: ' + base() : '';
+  const comuns = [];
+  for (let i = 0; i < qtd; i++) if (ret[i] === 0) comuns.push(i);
+  const todosOn = comuns.length > 0 && comuns.every(i => estado[i] === 'ON');
+  $('tTodos').textContent = todosOn ? 'Desligar todos' : 'Ligar todos';
+  $('btnTodos').classList.toggle('on', todosOn);
+  $('btnTodos').classList.toggle('off', !conectado || !moduloOnline);
   if (!$('ovAjustes').hidden) renderAjustes();
   if (!$('ovAgenda').hidden) renderAgenda();
   if (!$('ovModulo').hidden) renderModulo();
@@ -358,12 +397,12 @@ function renderModInfo() {
 }
 function renderModulo() {
   $('idDisp2').value = cfg.id || '';
+  $('idTopico').textContent = cfg.id ? 'Tópico: automacao/' + cfg.id + '/' : '';
   $('idStatus').textContent = !cfg.id ? 'Digite o ID do módulo.'
     : moduloOnline ? 'Módulo online com este ID. Ele é o mesmo gravado no módulo.'
     : 'Módulo offline, ou este ID é diferente do gravado no módulo.';
 }
 $('btnCfgModulo').addEventListener('click', () => { renderModulo(); abre('ovModulo'); });
-$('btnAjustes').addEventListener('click', () => { renderAjustes(); abre('ovAjustes'); });
 $('selQtd').addEventListener('change', () => {
   const n = parseInt($('selQtd').value, 10);
   if (!permitido()) { avisaOffline(); $('selQtd').value = String(qtd); return; }
@@ -471,7 +510,6 @@ function renderAgenda() {
     l.appendChild(b);
   });
 }
-$('btnAgenda').addEventListener('click', () => { renderAgenda(); abre('ovAgenda'); });
 
 const chips = [];
 DIAS.forEach((d, i) => {
@@ -552,6 +590,31 @@ $('agSalva').addEventListener('click', () => {
   renderAgenda();
 });
 
+// ---------- ligar / desligar todos ----------
+$('btnTodos').addEventListener('click', () => {
+  if (!permitido()) return;
+  // relés com retenção (portão, fechadura, campainha) não entram no "ligar todos"
+  const comuns = [];
+  for (let i = 0; i < qtd; i++) if (ret[i] === 0) comuns.push(i);
+  const ligar = !(comuns.length > 0 && comuns.every(i => estado[i] === 'ON'));
+  const alvos = ligar ? comuns : Array.from({ length: qtd }, (_, i) => i);
+  if (!alvos.length) { alert('Não há relés comuns para ligar em grupo. Os relés com retenção são acionados um a um.'); return; }
+  silencioAte = Date.now() + 4000;
+  alvos.forEach(i => client.publish(base() + 'rele/' + (i + 1) + '/set', ligar ? 'ON' : 'OFF'));
+  fala(ligar ? 'Todos ligados' : 'Todos desligados');
+});
+
+// ---------- data e hora ----------
+function atualizaRelogio() {
+  const d = new Date();
+  const dia = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  const txt = dia + ' · ' + hora;
+  if ($('dataHora').textContent !== txt) $('dataHora').textContent = txt;
+}
+atualizaRelogio();
+setInterval(atualizaRelogio, 1000);
+
 // ---------- MQTT ----------
 function alterna(i) {
   if (!client || !conectado) return;
@@ -613,7 +676,7 @@ function conecta() {
           if (n >= 0 && n < MAXN && (msg === 'ON' || msg === 'OFF')) {
             const antes = estado[n];
             estado[n] = msg;
-            if (antes !== null && antes !== msg && n < qtd) fala(nomes[n] + (msg === 'ON' ? ' ligado' : ' desligado'));
+            if (antes !== null && antes !== msg && n < qtd && Date.now() > silencioAte) fala(nomes[n] + (msg === 'ON' ? ' ligado' : ' desligado'));
           }
         }
       }
@@ -627,11 +690,9 @@ function trocaId(v) {
   const id = limpaId(v);
   if (id.length < 3) { alert('O ID precisa ter ao menos 3 caracteres (letras minúsculas, números, - e _).'); return; }
   cfg.id = id; save('cfg', cfg);
-  $('idDisp').value = id; $('idDisp2').value = id;
+  $('idDisp2').value = id;
   conecta();
 }
-$('idDisp').value = cfg.id;
-$('salvaId').addEventListener('click', () => trocaId($('idDisp').value));
 $('salvaId2').addEventListener('click', () => trocaId($('idDisp2').value));
 
 // ---------- instalação (PWA) ----------
@@ -655,8 +716,9 @@ if (typeof mqtt === 'undefined') {
 } else if (cfg.id) {
   conecta();
 } else {
-  document.querySelector('details').open = true;
-  $('tSrv').textContent = 'Digite o ID do dispositivo';
+  $('tSrv').textContent = 'Defina o ID em Ajustes';
+  renderModulo();
+  abre('ovModulo');   // primeiro uso: já abre a tela para informar o ID
 }
 </script>
 </body>
