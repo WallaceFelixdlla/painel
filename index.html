@@ -141,19 +141,13 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
 
 <nav class="abas" id="abas"><div class="in">
   <button class="aba on" data-aba="painel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Painel</button>
-  <button class="aba" data-aba="agenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Agenda</button>
+  <button class="aba" data-aba="reles"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Relés</button>
   <button class="aba" data-aba="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
 </div></nav>
 
 <!-- Ajustes -->
 <div class="ov" id="ovAjustes" hidden><div class="modal">
   <div class="mh"><h2>Ajustes</h2><button class="x" data-fecha="ovAjustes" aria-label="Fechar">✕</button></div>
-  <label>Quantidade de relés habilitados
-    <select id="selQtd"></select>
-  </label>
-  <p class="dica">Só os relés habilitados aparecem no painel e são acionados pelo módulo.</p>
-  <div class="tit">Configurar cada relé</div>
-  <div class="lista" id="listaRele"></div>
   <div class="sec2">Aparência</div>
   <div class="temas" id="temas"></div>
   <div class="sec2">Voz dos avisos</div>
@@ -167,13 +161,16 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
   <p class="dica" id="iosDica">Para instalar no iPhone ou iPad: toque em Compartilhar e depois em "Adicionar à Tela de Início". No Android e no computador, o botão "Instalar aplicativo" aparece aqui quando o navegador permitir.</p>
 </div></div>
 
-<!-- Agenda -->
-<div class="ov" id="ovAgenda" hidden><div class="modal">
-  <div class="mh"><h2>Agenda</h2><button class="x" data-fecha="ovAgenda" aria-label="Fechar">✕</button></div>
-  <p class="dica" id="agHoraMod"></p>
-  <div class="lista" id="listaAg" style="margin-top:12px"></div>
-  <button class="btn add" id="agNovo">+ Novo agendamento</button>
-  <p class="dica">Os horários ficam gravados no módulo e funcionam mesmo com o celular desligado. "Ligar e desligar" aciona o relé em um horário e desliga em outro (se o desligar for antes do ligar, ele desliga no dia seguinte).</p>
+<!-- Relés -->
+<div class="ov" id="ovReles" hidden><div class="modal">
+  <div class="mh"><h2>Relés</h2><button class="x" data-fecha="ovReles" aria-label="Fechar">✕</button></div>
+  <label>Quantidade de relés habilitados
+    <select id="selQtd"></select>
+  </label>
+  <p class="dica">Só os relés habilitados aparecem no painel e são acionados pelo módulo.</p>
+  <div class="tit">Escolha um relé para configurar</div>
+  <p class="dica" style="margin-top:0">Em cada relé você define o nome, o funcionamento (normal ou retenção) e os agendamentos.</p>
+  <div class="lista" id="listaRele" style="margin-top:10px"></div>
 </div></div>
 
 <!-- Configurar módulo -->
@@ -218,8 +215,13 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
       <select id="mUn"><option value="1">segundos</option><option value="60">minutos</option><option value="3600">horas</option></select>
     </div>
   </label>
+  <div class="tit">Agendamentos deste relé</div>
+  <p class="dica" id="agHoraMod" style="margin-top:0"></p>
+  <div class="lista" id="listaAg" style="margin-top:10px"></div>
+  <button class="btn sec add" id="agNovo">+ Novo agendamento</button>
+  <p class="dica">Os agendamentos são salvos assim que você cria ou edita. Nome e funcionamento são salvos no botão Salvar.</p>
   <div class="acoes">
-    <button class="btn sec" data-fecha="ovRele">Cancelar</button>
+    <button class="btn sec" data-fecha="ovRele">Fechar</button>
     <button class="btn" id="mSalva">Salvar</button>
   </div>
 </div></div>
@@ -227,7 +229,6 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
 <!-- Editar agendamento -->
 <div class="ov" id="ovAg" hidden><div class="modal">
   <div class="mh"><h2 id="agTit">Agendamento</h2><button class="x" data-fecha="ovAg" aria-label="Fechar">✕</button></div>
-  <label>Relé <select id="agRele"></select></label>
   <label>Ação
     <select id="agAcao">
       <option value="1">Ligar</option>
@@ -280,16 +281,16 @@ const avisaOffline = () => alert('O módulo precisa estar online para salvar ess
 
 // ---------- janelas ----------
 function atualizaAba() {
-  const ag = !$('ovAgenda').hidden || !$('ovAg').hidden;
-  const aj = !$('ovAjustes').hidden || !$('ovModulo').hidden || !$('ovRele').hidden;
-  const atual = ag ? 'agenda' : aj ? 'ajustes' : 'painel';
+  const rl = !$('ovReles').hidden || !$('ovRele').hidden || !$('ovAg').hidden;
+  const aj = !$('ovAjustes').hidden || !$('ovModulo').hidden;
+  const atual = rl ? 'reles' : aj ? 'ajustes' : 'painel';
   document.querySelectorAll('.aba').forEach(b => b.classList.toggle('on', b.dataset.aba === atual));
 }
 const abre = id => { $(id).hidden = false; atualizaAba(); };
 function fecha(id) { $(id).hidden = true; atualizaAba(); }
 function irAba(n) {
-  ['ovAjustes', 'ovAgenda', 'ovModulo', 'ovRele', 'ovAg'].forEach(i => { $(i).hidden = true; });
-  if (n === 'agenda') { renderAgenda(); $('ovAgenda').hidden = false; }
+  ['ovReles', 'ovRele', 'ovAg', 'ovAjustes', 'ovModulo'].forEach(i => { $(i).hidden = true; });
+  if (n === 'reles') { renderReles(); $('ovReles').hidden = false; }
   else if (n === 'ajustes') { renderAjustes(); $('ovAjustes').hidden = false; }
   atualizaAba();
 }
@@ -395,32 +396,13 @@ function desenha() {
   $('btnTodos').classList.toggle('on', todosOn);
   $('btnTodos').classList.toggle('off', !conectado || !moduloOnline);
   if (!$('ovAjustes').hidden) renderAjustes();
-  if (!$('ovAgenda').hidden) renderAgenda();
+  if (!$('ovReles').hidden) renderReles();
+  if (!$('ovRele').hidden) renderReleAg();
   if (!$('ovModulo').hidden) renderModulo();
 }
 
-// ---------- Ajustes ----------
-for (let n = 1; n <= MAXN; n++) {
-  const o = document.createElement('option'); o.value = n; o.textContent = n + (n === 1 ? ' relé' : ' relés');
-  $('selQtd').appendChild(o);
-}
-function renderAjustes() {
-  $('selQtd').value = String(qtd);
-  renderModInfo();
-  const l = $('listaRele'); l.innerHTML = '';
-  for (let i = 0; i < qtd; i++) {
-    const b = document.createElement('button'); b.className = 'row';
-    const col = document.createElement('div'); col.className = 'col';
-    const a = document.createElement('b'); a.textContent = (i + 1) + ' · ' + nomes[i];
-    const s = document.createElement('span'); s.className = 'sub';
-    s.textContent = ret[i] > 0 ? 'Retenção de ' + fmtTempo(ret[i]) : 'Normal (fica ligado até desligar)';
-    col.append(a, s);
-    const seta = document.createElement('span'); seta.textContent = '›'; seta.className = 'sub';
-    b.append(col, seta);
-    b.addEventListener('click', () => abreRele(i));
-    l.appendChild(b);
-  }
-}
+// ---------- Ajustes (configurações gerais) ----------
+function renderAjustes() { renderModInfo(); }
 function renderModInfo() {
   const kv = $('modInfo'); kv.innerHTML = '';
   const linhas = moduloOnline
@@ -436,6 +418,30 @@ function renderModulo() {
     : 'Módulo offline, ou este ID é diferente do gravado no módulo.';
 }
 $('btnCfgModulo').addEventListener('click', () => { renderModulo(); abre('ovModulo'); });
+
+// ---------- Relés: quantidade e lista ----------
+for (let n = 1; n <= MAXN; n++) {
+  const o = document.createElement('option'); o.value = n; o.textContent = n + (n === 1 ? ' relé' : ' relés');
+  $('selQtd').appendChild(o);
+}
+function renderReles() {
+  $('selQtd').value = String(qtd);
+  const l = $('listaRele'); l.innerHTML = '';
+  for (let i = 0; i < qtd; i++) {
+    const b = document.createElement('button'); b.className = 'row';
+    const col = document.createElement('div'); col.className = 'col';
+    const a = document.createElement('b'); a.textContent = (i + 1) + ' · ' + nomes[i];
+    const s = document.createElement('span'); s.className = 'sub';
+    const nAg = ag.filter(x => x.rele === i + 1).length;
+    s.textContent = (ret[i] > 0 ? 'Retenção de ' + fmtTempo(ret[i]) : 'Normal') + ' · ' +
+                    (nAg ? nAg + (nAg === 1 ? ' agendamento' : ' agendamentos') : 'sem agendamentos');
+    col.append(a, s);
+    const seta = document.createElement('span'); seta.textContent = '›'; seta.className = 'sub';
+    b.append(col, seta);
+    b.addEventListener('click', () => abreRele(i));
+    l.appendChild(b);
+  }
+}
 $('selQtd').addEventListener('change', () => {
   const n = parseInt($('selQtd').value, 10);
   if (!permitido()) { avisaOffline(); $('selQtd').value = String(qtd); return; }
@@ -444,7 +450,7 @@ $('selQtd').addEventListener('change', () => {
   desenha();
 });
 
-// ---------- configuração de um relé ----------
+// ---------- Configuração de um relé: nome, funcionamento e agendamentos ----------
 function atualizaTempo() { $('mTempoL').style.display = $('mModo').value === 'ret' ? 'block' : 'none'; }
 function abreRele(i) {
   editRele = i;
@@ -456,6 +462,7 @@ function abreRele(i) {
   else if (r % 60 === 0) { $('mUn').value = '60';   $('mTempo').value = r / 60; }
   else                   { $('mUn').value = '1';    $('mTempo').value = r; }
   atualizaTempo();
+  renderReleAg();
   abre('ovRele');
 }
 $('mModo').addEventListener('change', atualizaTempo);
@@ -478,7 +485,7 @@ $('mSalva').addEventListener('click', () => {
   desenha();
 });
 
-// ---------- Agenda ----------
+// ---------- Agendamentos (por relé) ----------
 function serializaAgenda() {
   if (!ag.length) return '-';
   return ag.map(a => [a.rele, a.acao, a.hh, a.mm, a.dias, a.unico, a.ativo, a.ano, a.mes, a.dia, a.fim, a.hh2, a.mm2].join(',')).join(';');
@@ -498,27 +505,25 @@ function descDias(a) {
   if (a.dias === 127) return 'Todos os dias';
   return DIAS.filter((_, i) => a.dias & (1 << i)).join(', ') || '—';
 }
-function renderAgenda() {
+function renderReleAg() {
+  if (editRele < 0) return;
   $('agHoraMod').textContent = moduloOnline
     ? (info.hora && info.hora !== '--' ? 'Hora do módulo: ' + info.hora : 'O módulo ainda não sincronizou a hora (precisa de internet).')
-    : 'Módulo offline: a agenda será exibida quando ele conectar.';
+    : 'Módulo offline: os agendamentos aparecem quando ele conectar.';
   const l = $('listaAg'); l.innerHTML = '';
-  if (!ag.length) {
-    const p = document.createElement('p'); p.className = 'dica'; p.textContent = 'Nenhum agendamento ainda.';
-    l.appendChild(p);
-  }
+  let achou = 0;
   ag.forEach((a, idx) => {
+    if (a.rele !== editRele + 1) return;
+    achou++;
     const b = document.createElement('div'); b.className = 'row';
     const col = document.createElement('div'); col.className = 'col';
     const t = document.createElement('b');
-    const nomeRele = nomes[a.rele - 1] || 'Relé ' + a.rele;
     t.textContent = a.fim
-      ? pad(a.hh) + ':' + pad(a.mm) + ' → ' + pad(a.hh2) + ':' + pad(a.mm2) + ' · Liga e desliga · ' + nomeRele
-      : pad(a.hh) + ':' + pad(a.mm) + ' · ' + (a.acao ? 'Ligar' : 'Desligar') + ' · ' + nomeRele;
+      ? pad(a.hh) + ':' + pad(a.mm) + ' → ' + pad(a.hh2) + ':' + pad(a.mm2) + ' · Liga e desliga'
+      : pad(a.hh) + ':' + pad(a.mm) + ' · ' + (a.acao ? 'Ligar' : 'Desligar');
     const s = document.createElement('span'); s.className = 'sub';
     let desc = descDias(a);
     if (a.fim && (a.hh2 * 60 + a.mm2) < (a.hh * 60 + a.mm)) desc += ' · desliga no dia seguinte';
-    if (a.rele > qtd) desc += ' · relé desabilitado';
     if (a.unico && !a.ativo) desc += ' · já executado';
     else if (a.unico && new Date(a.ano, a.mes - 1, a.dia, a.hh, a.mm) < new Date()) desc += ' · já passou';
     s.textContent = desc;
@@ -528,20 +533,24 @@ function renderAgenda() {
     chk.addEventListener('click', e => e.stopPropagation());
     chk.addEventListener('change', () => {
       if (!permitido()) { avisaOffline(); chk.checked = !!a.ativo; return; }
-      a.ativo = chk.checked ? 1 : 0; publicaAgenda(); renderAgenda();
+      a.ativo = chk.checked ? 1 : 0; publicaAgenda(); renderReleAg();
     });
     const del = document.createElement('button'); del.className = 'del'; del.textContent = '🗑'; del.title = 'Excluir';
     del.addEventListener('click', e => {
       e.stopPropagation();
       if (!permitido()) { avisaOffline(); return; }
       if (!confirm('Excluir este agendamento?')) return;
-      ag.splice(idx, 1); publicaAgenda(); renderAgenda();
+      ag.splice(idx, 1); publicaAgenda(); renderReleAg();
     });
     ac.append(chk, del);
     b.append(col, ac);
     b.addEventListener('click', () => abreAg(idx));
     l.appendChild(b);
   });
+  if (!achou) {
+    const p = document.createElement('p'); p.className = 'dica'; p.textContent = 'Nenhum agendamento para este relé.';
+    l.appendChild(p);
+  }
 }
 
 const chips = [];
@@ -565,14 +574,8 @@ $('agRep').addEventListener('change', atualizaRep);
 
 function abreAg(idx) {
   editAg = idx;
-  $('agTit').textContent = idx >= 0 ? 'Editar agendamento' : 'Novo agendamento';
-  const sel = $('agRele'); sel.innerHTML = '';
-  for (let i = 0; i < qtd; i++) {
-    const o = document.createElement('option'); o.value = i + 1; o.textContent = (i + 1) + ' · ' + nomes[i];
-    sel.appendChild(o);
-  }
+  $('agTit').textContent = (idx >= 0 ? 'Editar agendamento' : 'Novo agendamento') + ' · Relé ' + (editRele + 1);
   const a = idx >= 0 ? ag[idx] : null;
-  if (a && a.rele <= qtd) sel.value = String(a.rele);
   $('agAcao').value = a ? (a.fim ? '2' : String(a.acao)) : '1';
   $('agHora').value = a ? pad(a.hh) + ':' + pad(a.mm) : '08:00';
   $('agHora2').value = a && a.fim ? pad(a.hh2) + ':' + pad(a.mm2) : '23:00';
@@ -595,7 +598,7 @@ $('agSalva').addEventListener('click', () => {
   if (isNaN(hh) || isNaN(mm)) { alert('Escolha o horário.'); return; }
   const rep = $('agRep').value;
   const sel = $('agAcao').value;
-  const a = { rele: Number($('agRele').value), acao: sel === '0' ? 0 : 1, hh, mm, dias: 127, unico: 0, ativo: 1, ano: 0, mes: 0, dia: 0, fim: 0, hh2: 0, mm2: 0 };
+  const a = { rele: editRele + 1, acao: sel === '0' ? 0 : 1, hh, mm, dias: 127, unico: 0, ativo: 1, ano: 0, mes: 0, dia: 0, fim: 0, hh2: 0, mm2: 0 };
   if (sel === '2') {
     const [h2, m2] = ($('agHora2').value || '').split(':').map(Number);
     if (isNaN(h2) || isNaN(m2)) { alert('Escolha o horário de desligar.'); return; }
@@ -615,12 +618,12 @@ $('agSalva').addEventListener('click', () => {
   }
   if (editAg >= 0) { a.ativo = ag[editAg].ativo; ag[editAg] = a; }
   else {
-    if (ag.length >= MAXAG) { alert('Limite de ' + MAXAG + ' agendamentos.'); return; }
+    if (ag.length >= MAXAG) { alert('Limite de ' + MAXAG + ' agendamentos no total.'); return; }
     ag.push(a);
   }
   publicaAgenda();
   fecha('ovAg');
-  renderAgenda();
+  renderReleAg();
 });
 
 // ---------- temas ----------
