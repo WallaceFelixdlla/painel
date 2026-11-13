@@ -220,6 +220,7 @@ input,select{min-width:0;padding:11px 12px;border-radius:10px;border:1px solid v
   <div class="lista" id="listaAg" style="margin-top:10px"></div>
   <button class="btn sec add" id="agNovo">+ Novo agendamento</button>
   <p class="dica">Os agendamentos são salvos assim que você cria ou edita. Nome e funcionamento são salvos no botão Salvar.</p>
+  <button class="btn perigo add" id="mReset">Resetar configuração deste relé</button>
   <div class="acoes">
     <button class="btn sec" data-fecha="ovRele">Fechar</button>
     <button class="btn" id="mSalva">Salvar</button>
@@ -304,6 +305,7 @@ const SOM_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 function atualizaSom() { $('btnSom').innerHTML = som ? SOM_ON : SOM_OFF; $('btnSom').classList.toggle('mudo', !som); }
 let vozEscolhida = load('voz', '');          // nome da voz escolhida ('' = automática)
 let silencioAte = 0;
+let lote = null, loteTimer = null, offTimer = null;   // ação em grupo e pequena tolerância de oscilação
 const pontosVoz = v => (/natural|online/i.test(v.name) ? 2 : 0) + (/^pt[-_]BR/i.test(v.lang) ? 1 : 0);
 function vozesPt() {
   if (!('speechSynthesis' in window)) return [];
@@ -482,6 +484,24 @@ $('mSalva').addEventListener('click', () => {
     else { client.publish(base() + 'rele/' + (i + 1) + '/ret', String(seg), { retain: true }); ret[i] = seg; }
   }
   fecha('ovRele');
+  desenha();
+});
+
+$('mReset').addEventListener('click', () => {
+  const i = editRele;
+  if (i < 0) return;
+  if (!permitido()) { avisaOffline(); return; }
+  const n = ag.filter(a => a.rele === i + 1).length;
+  const msg = 'Resetar a configuração do Relé ' + (i + 1) + '?\n\n' +
+    '• O nome volta para "Relé ' + (i + 1) + '"\n' +
+    '• O funcionamento volta para Normal (sem retenção)\n' +
+    '• ' + (n ? n + (n === 1 ? ' agendamento deste relé será excluído' : ' agendamentos deste relé serão excluídos') : 'Não há agendamentos para excluir') +
+    '\n\nO estado atual (ligado ou desligado) não muda.';
+  if (!confirm(msg)) return;
+  nomes[i] = 'Relé ' + (i + 1); save('nomes', nomes);
+  if (ret[i] !== 0) { client.publish(base() + 'rele/' + (i + 1) + '/ret', '0', { retain: true }); ret[i] = 0; }
+  if (n) { ag = ag.filter(a => a.rele !== i + 1); publicaAgenda(); }
+  abreRele(i);      // recarrega a tela já com os valores de fábrica
   desenha();
 });
 
@@ -668,9 +688,17 @@ $('btnTodos').addEventListener('click', () => {
   const ligar = !(comuns.length > 0 && comuns.every(i => estado[i] === 'ON'));
   const alvos = ligar ? comuns : Array.from({ length: qtd }, (_, i) => i);
   if (!alvos.length) { alert('Não há relés comuns para ligar em grupo. Os relés com retenção são acionados um a um.'); return; }
-  silencioAte = Date.now() + 4000;
+  // a voz só anuncia depois que o módulo confirmar cada relé (ou avisa os que não responderam)
+  lote = { faltam: new Set(alvos), ligar };
+  silencioAte = Date.now() + 9000;
+  clearTimeout(loteTimer);
+  loteTimer = setTimeout(() => {
+    if (!lote) return;
+    const f = lote.faltam.size;
+    lote = null; silencioAte = Date.now() + 1500;
+    fala(f + (f === 1 ? ' relé não respondeu' : ' relés não responderam'));
+  }, 8000);
   alvos.forEach(i => client.publish(base() + 'rele/' + (i + 1) + '/set', ligar ? 'ON' : 'OFF'));
-  fala(ligar ? 'Todos ligados' : 'Todos desligados');
 });
 
 // ---------- data e hora ----------
@@ -724,7 +752,9 @@ function conecta() {
     const r = topic.slice(base().length);
 
     if (r === 'status') {
-      moduloOnline = msg === 'ONLINE';
+      clearTimeout(offTimer);
+      if (msg === 'ONLINE') moduloOnline = true;
+      else offTimer = setTimeout(() => { moduloOnline = false; desenha(); }, 4000);
     } else if (r === 'config/qtd') {
       const n = parseInt(msg, 10);
       if (n >= 1 && n <= MAXN) qtd = n;
@@ -745,6 +775,14 @@ function conecta() {
           if (n >= 0 && n < MAXN && (msg === 'ON' || msg === 'OFF')) {
             const antes = estado[n];
             estado[n] = msg;
+            if (lote && lote.faltam.has(n) && msg === (lote.ligar ? 'ON' : 'OFF')) {
+              lote.faltam.delete(n);
+              if (!lote.faltam.size) {
+                const lig = lote.ligar;
+                lote = null; clearTimeout(loteTimer); silencioAte = Date.now() + 1500;   // evita repetir o aviso do último relé
+                fala(lig ? 'Todos ligados' : 'Todos desligados');
+              }
+            }
             if (antes !== null && antes !== msg && n < qtd && Date.now() > silencioAte) fala(nomes[n] + (msg === 'ON' ? ' ligado' : ' desligado'));
           }
         }
